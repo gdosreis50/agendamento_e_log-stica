@@ -25,6 +25,11 @@
 			handlePedido($metodo, $parametro, $pdo);
 			break;
 
+		case 'motorista':
+			require_once 'routes/motorista.php';
+			handleMotorista ($metodo, $parametro, $pdo);
+			break;
+
 		default:
 			http_response_code(404);
 			echo json_encode([
