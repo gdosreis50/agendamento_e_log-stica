@@ -22,6 +22,39 @@
 
                 echo json_encode($sucesso);
 
+                break;
+
+            case 'PUT':
+                if(!$parametro){
+                    http_response_code(400);
+                    echo json_encode([
+                        "erro" => "requisição sem parâmetros"
+                    ]);
+
+                    break;
+                }
+
+                $data = json_decode(file_get_contents("php://input"), true);
+                $sucesso = motoristaModel::editarMotorista($data, $parametro, $pdo);
+
+                echo json_encode($sucesso);
+                break;
+
+            case 'DELETE':
+                if(!$parametro){
+                    http_response_code(400);
+                    echo json_encode([
+                        "erro" => "requisição sem parâmetros"
+                    ]);
+
+                    break;
+                }
+
+                $sucesso = motoristaModel::excluirMotorista($parametro, $pdo);
+
+                echo json_encode($sucesso);
+                break;
+
         }
     }
 
