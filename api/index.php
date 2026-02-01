@@ -30,6 +30,16 @@
 			handleMotorista ($metodo, $parametro, $pdo);
 			break;
 
+		case 'veiculo':
+			require_once 'routes/veiculo.php';
+			handleVeiculo ($metodo, $parametro, $pdo);
+			break;
+
+		case 'vagao':
+			require_once 'routes/vagao.php';
+			handleVagao ($metodo, $parametro, $pdo);
+			break;
+
 		default:
 			http_response_code(404);
 			echo json_encode([
