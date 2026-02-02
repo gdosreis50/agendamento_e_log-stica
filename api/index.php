@@ -40,6 +40,11 @@
 			handleVagao ($metodo, $parametro, $pdo);
 			break;
 
+		case 'transportadora':
+			require_once 'routes/transportadora.php';
+			handleTransportadora ($metodo, $parametro, $pdo);
+			break;
+
 		default:
 			http_response_code(404);
 			echo json_encode([

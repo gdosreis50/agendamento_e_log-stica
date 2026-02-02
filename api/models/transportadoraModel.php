@@ -1,35 +1,26 @@
 <?php
 
-    class veiculoModel {
-
-    //GET methods
-    //Consultas retornam veiculo e vagão relacionados
-        public static function listarVeiculo ($pdo){
-            $sql = "SELECT * FROM veiculo
-                    INNER JOIN vagao
-                    ON veiculo.idveiculo = vagao.idveiculo
-                    WHERE veiculo.ativo = 'ativo'";
+    class transportadoraModel {
+        //GET methods
+        public static function listarTransportadora ($pdo){
+            $sql = "SELECT * FROM transportadora WHERE ativo = 'ativo'";
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
-        public static function buscarPorId($pdo, $idVeiculo){
-  
-            $sql = "SELECT * FROM veiculo
-                    INNER JOIN vagao
-                    ON veiculo.idveiculo = vagao.idveiculo
-                    WHERE veiculo.idVeiculo = :idVeiculo  AND veiculo.ativo = 'ativo'";
+        public static function buscarPorId($pdo, $idTrans){
+            $sql = "SELECT * FROM transportadora WHERE idtransportadora = :idTrans AND ativo = 'ativo'";
             $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(":idVeiculo", $idVeiculo);
+            $stmt->bindParam(":idTrans", $idTrans);
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         }
 
     //POST method
-        public static function criarVeiculo($data, $pdo){
+        public static function criarTransportadora($data, $pdo){
 
-            $required = ['placa'];
+            $required = ['nomeTransportadora','cnpj','antt'];
 
             foreach ($required as $field) {
                 if (empty($data[$field])) {
@@ -41,14 +32,16 @@
                 }
             }
 
-            $sql = "INSERT INTO veiculo (placa, tipo, idfuncionario)
-            VALUES (?, ?, ?)";
+            $sql = "INSERT INTO transportadora (nomeTransportadora, cnpj, antt, email, idfuncionario)
+            VALUES (?, ?, ?, ?, ?)";
 
             try{
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
-                $data['placa'],
-                $data['tipo'],
+                $data['nomeTransportadora'],
+                $data['cnpj'],
+                $data['antt'],
+                $data['email'],
                 $data['idfuncionario']
             ]);
 
@@ -69,9 +62,9 @@
         }
 
     //PUT method
-    public static function editarVeiculo($data, $idVeiculo, $pdo){
+    public static function editarTransportadora($data, $idTrans, $pdo){
 
-        $required = ['placa'];
+        $required = ['nomeTransportadora','cnpj','antt'];
 
             foreach ($required as $field) {
                 if (empty($data[$field])) {
@@ -83,18 +76,22 @@
                 }
             }
 
-            $sql = "UPDATE veiculo set 
-                            placa = ?,
-                            tipo = ?, 
-                            idFuncionario = ? WHERE idVeiculo = ?";
+            $sql = "UPDATE transportadora set 
+                            nomeTransportadora = ?,
+                            cnpj = ?, 
+                            antt = ?, 
+                            email = ?,  
+                            idFuncionario = ? WHERE idtransportadora = ?";
 
             try{
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
-                    $data['placa'],
-                    $data['tipo'],
+                    $data['nomeTransportadora'],
+                    $data['cnpj'],
+                    $data['antt'],
+                    $data['email'],
                     $data['idfuncionario'],
-                    $idVeiculo
+                    $idTrans
                 ]);
 
                 http_response_code(200);
@@ -113,13 +110,13 @@
 
     //DELETE method
 
-    public static function excluirVeiculo($idVeiculo, $pdo){
+    public static function excluirTransportadora($idTrans, $pdo){
 
-        $sql = "UPDATE veiculo SET ativo = 'desativado' WHERE idVeiculo = :idVeiculo";
+        $sql = "UPDATE transportadora SET ativo = 'desativado' WHERE idtransportadora = :idTrans";
 
         try{
             $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(":idVeiculo", $idVeiculo);
+            $stmt->bindParam(":idTrans", $idTrans);
             $stmt->execute();
             http_response_code(200);
             return ["success" => true];
@@ -131,8 +128,6 @@
                 ];
         }
     }
-
     }
-
 
 ?>
