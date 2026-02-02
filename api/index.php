@@ -45,6 +45,11 @@
 			handleTransportadora ($metodo, $parametro, $pdo);
 			break;
 
+		case 'agendamento':
+			require_once 'routes/agendamento.php';
+			handleAgendamento ($metodo, $parametro, $pdo);
+			break;
+
 		default:
 			http_response_code(404);
 			echo json_encode([
