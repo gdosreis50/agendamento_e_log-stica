@@ -55,6 +55,11 @@
 			handleFuncionario ($metodo, $parametro, $pdo);
 			break;
 
+		case 'checklist':
+			require_once 'routes/checklist.php';
+			handleCheck ($metodo, $parametro, $pdo);
+			break;
+
 		default:
 			http_response_code(404);
 			echo json_encode([
