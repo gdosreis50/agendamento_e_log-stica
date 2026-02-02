@@ -1,26 +1,27 @@
 <?php
 
-    class agendamentoModel {
+    class funcionarioModel {
         //GET methods
-        public static function listarAgendamento ($pdo){
-            $sql = "SELECT * FROM agendamento WHERE ativo = 'ativo'";
+        public static function listarFuncionario ($pdo){
+            $sql = "SELECT * FROM funcionario WHERE ativo = 'ativo'";
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
-        public static function buscarPorId($pdo, $idAgen){
-            $sql = "SELECT * FROM agendamento WHERE idagendamento = :idAgen AND ativo = 'ativo'";
+        public static function buscarPorId($pdo, $idFunc){
+            $sql = "SELECT * FROM funcionario WHERE idfuncionario = :idFunc AND ativo = 'ativo'";
             $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(":idAgen", $idAgen);
+            $stmt->bindParam(":idFunc", $idFunc);
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         }
 
-    //POST method
-        public static function criarAgendamento($data, $pdo){
+        //POST method
 
-            $required = ['dataPrevista'];
+        public static function criarFuncionario($data, $pdo){
+
+            $required = ['nomeFunc'];
 
             foreach ($required as $field) {
                 if (empty($data[$field])) {
@@ -32,18 +33,14 @@
                 }
             }
 
-            $sql = "INSERT INTO agendamento (dataPrevista, motorista_idmotoristas, funcionario_idfuncionario, pedido_idpedidos, transportadora_idtransportadora, veiculo_idveiculo)
-            VALUES (?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO funcionario (nomeFunc, cpf)
+            VALUES (?, ?)";
 
             try{
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
-                $data['dataPrevista'],
-                $data['motorista_idmotoristas'],
-                $data['funcionario_idfuncionario'],
-                $data['pedido_idpedidos'],
-                $data['transportadora_idtransportadora'],
-                $data['veiculo_idveiculo']
+                $data['nomeFunc'],
+                $data['cpf']
             ]);
 
             http_response_code(201);
@@ -62,10 +59,10 @@
             
         }
 
-    //PUT method
-        public static function editarAgendamento($data, $idAgen, $pdo){
+        //PUT method
+        public static function editarFuncionario($data, $idFunc, $pdo){
 
-        $required = ['dataPrevista'];
+        $required = ['nomeFunc'];
 
             foreach ($required as $field) {
                 if (empty($data[$field])) {
@@ -77,24 +74,17 @@
                 }
             }
 
-            $sql = "UPDATE agendamento set 
-                            dataPrevista = ?,
-                            motorista_idmotoristas = ?, 
-                            funcionario_idfuncionario = ?, 
-                            pedido_idpedidos = ?,  
-                            transportadora_idtransportadora = ?,
-                            veiculo_idveiculo = ? WHERE idagendamento = ?";
+            $sql = "UPDATE funcionario set 
+                            nomeFunc = ?,
+                            cpf = ?
+                            WHERE idfuncionario = ?";
 
             try{
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
-                    $data['dataPrevista'],
-                    $data['motorista_idmotoristas'],
-                    $data['funcionario_idfuncionario'],
-                    $data['pedido_idpedidos'],
-                    $data['transportadora_idtransportadora'],
-                    $data['veiculo_idveiculo'],
-                    $idAgen
+                    $data['nomeFunc'],
+                    $data['cpf'],
+                    $idFunc
                 ]);
 
                 http_response_code(200);
@@ -111,15 +101,15 @@
         }
 
 
-    //DELETE method
+        //DELETE method
 
-        public static function excluirAgendamento($idAgen, $pdo){
+        public static function excluirFuncionario($idFunc, $pdo){
 
-        $sql = "UPDATE agendamento SET ativo = 'desativado' WHERE idagendamento = :idAgen";
+        $sql = "UPDATE funcionario SET ativo = 'desativado' WHERE idfuncionario = :idFunc";
 
         try{
             $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(":idAgen", $idAgen);
+            $stmt->bindParam(":idFunc", $idFunc);
             $stmt->execute();
             http_response_code(200);
             return ["success" => true];

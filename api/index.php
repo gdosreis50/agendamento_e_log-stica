@@ -50,6 +50,11 @@
 			handleAgendamento ($metodo, $parametro, $pdo);
 			break;
 
+		case 'funcionario':
+			require_once 'routes/funcionario.php';
+			handleFuncionario ($metodo, $parametro, $pdo);
+			break;
+
 		default:
 			http_response_code(404);
 			echo json_encode([
