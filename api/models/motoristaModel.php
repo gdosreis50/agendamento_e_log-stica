@@ -4,10 +4,37 @@
 
     //GET methods
         public static function listarMotorista ($pdo){
-            $sql = "SELECT * FROM motorista WHERE ativo = 'ativo'";
+            $sql = "SELECT m.idmotoristas, m.nomeMotorista, m.cpf as cpfMot, m.cnh, m.dataVencimentoCnh, m.categoriaCnh, m.telefone, 
+                            f.idfuncionario, f.nomeFunc, f.cpf as cpfFunc, f.adm, f.ativo 
+                            FROM motorista m
+                    JOIN funcionario f ON m.idfuncionario = f.idfuncionario 
+                    WHERE m.ativo = 'ativo'";
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $dados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $motoristas = [];
+            foreach($dados as $row){
+                $motoristas[] = [
+                    "idmotoristas" => $row["idmotoristas"],
+                    "nomeMotorista" => $row["nomeMotorista"],
+                    "cpfMot" => $row["cpfMot"],
+                    "cnh" => $row["cnh"],
+                    "dataVencimentoCnh" => $row["dataVencimentoCnh"],
+                    "categoriaCnh" => $row["categoriaCnh"],
+                    "telefone" => $row["telefone"],
+                    
+                    "funcionario" => [
+                        "idfuncionario" => $row["idfuncionario"],
+                        "nomeFunc" => $row["nomeFunc"],
+                        "cpfFunc" => $row['cpfFunc'],
+                        "adm" => $row["adm"],
+                        "ativo" => $row["ativo"],
+                        ]   
+                ];
+            }
+
+            return $motoristas;
         }
 
         public static function buscarPorId($pdo, $idMot){
