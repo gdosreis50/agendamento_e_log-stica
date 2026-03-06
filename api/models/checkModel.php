@@ -21,7 +21,7 @@
 
         public static function criarCheck($data, $pdo){
 
-            $required = ['dataEmissao', 'idveiculo', 'idmotoristas', 'idtransportadora', 'idfuncionario'];
+            $required = ['dataEmissao', 'idveiculo', 'idmotoristas', 'idfuncionario'];
 
             foreach ($required as $field) {
                 if (empty($data[$field])) {
