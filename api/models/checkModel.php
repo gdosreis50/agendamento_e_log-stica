@@ -21,7 +21,7 @@
 
         public static function criarCheck($data, $pdo){
 
-            $required = ['dataEmissao', 'idveiculo', 'idmotoristas', 'idfuncionario'];
+            $required = ['numPed', 'dataEmissao', 'idveiculo', 'idmotoristas', 'idfuncionario'];
 
             foreach ($required as $field) {
                 if (empty($data[$field])) {
@@ -45,6 +45,17 @@
                 $data['idtransportadora'],
                 $data['idfuncionario']
             ]);
+
+            $idCheckCriado = $pdo->lastInsertId();
+
+            $sql2 = "UPDATE pedido SET idcheckList = ?, statusPed = 'carregado' WHERE numPed = ?";
+            $stmt2 = $pdo->prepare($sql2);
+            $stmt2->execute([
+                                $idCheckCriado, 
+                                $data['numPed']
+                            ]);
+
+
 
             http_response_code(201);
             return 
