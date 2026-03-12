@@ -5,7 +5,7 @@
     //GET methods
     //Consultas retornam veiculo e vagão relacionados
         public static function listarVeiculo ($pdo){
-            $sql = "SELECT veiculo.idveiculo, veiculo.placa, veiculo.tipo, vagao.idvagao, vagao.comprimento, vagao.largura, vagao.altura, funcionario.idfuncionario, funcionario.nomeFunc, funcionario.cpf, funcionario.adm, funcionario.ativo as funcativo FROM veiculo
+            $sql = "SELECT veiculo.idveiculo, veiculo.placa, veiculo.tipo, veiculo.tara, vagao.idvagao, vagao.comprimento, vagao.largura, vagao.altura, funcionario.idfuncionario, funcionario.nomeFunc, funcionario.cpf, funcionario.adm, funcionario.ativo as funcativo FROM veiculo
                     LEFT JOIN vagao
                     ON veiculo.idveiculo = vagao.idveiculo AND vagao.ativo = 'ativo'
                     INNER JOIN funcionario
@@ -28,6 +28,7 @@
                         "idveiculo" => $row["idveiculo"],
                         "placa" => $row["placa"],
                         "tipo" => $row['tipo'],
+                        "tara" => $row['tara'],
                         "vagoes" => [], // agora é lista
                         "funcionario" => [
                             "idfuncionario" => $row['idfuncionario'],
@@ -58,7 +59,7 @@
 
         public static function buscarPorId($pdo, $idVeiculo){
   
-            $sql = "SELECT veiculo.idveiculo, veiculo.placa, veiculo.tipo, vagao.idvagao, vagao.comprimento, vagao.largura, vagao.altura, funcionario.idfuncionario, funcionario.nomeFunc, funcionario.cpf, funcionario.adm, funcionario.ativo as funcativo 
+            $sql = "SELECT veiculo.idveiculo, veiculo.placa, veiculo.tipo, veiculo.tara, vagao.idvagao, vagao.comprimento, vagao.largura, vagao.altura, funcionario.idfuncionario, funcionario.nomeFunc, funcionario.cpf, funcionario.adm, funcionario.ativo as funcativo 
                     FROM veiculo
                     LEFT JOIN vagao
                     ON veiculo.idveiculo = vagao.idveiculo AND vagao.ativo = 'ativo'
@@ -79,6 +80,7 @@
                 "idveiculo" => $data[0]["idveiculo"],
                 "placa" => $data[0]["placa"],
                 "tipo" => $data[0]['tipo'],
+                "tara" => $data[0]['tara'],
                 "vagoes" => [], // agora é lista
                 "funcionario" => [
                     "idfuncionario" => $data[0]['idfuncionario'],
