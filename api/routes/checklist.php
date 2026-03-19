@@ -25,11 +25,9 @@
                 break;
 
             case 'PUT':
-                http_response_code(400);
-                echo json_encode([
-                    "erro" => "requisição inadequada"
-                ]);
 
+                $baixa = checkModel::darBaixa($pdo, $parametro);
+                echo json_encode($baixa);
                 break;
 
             case 'DELETE':
