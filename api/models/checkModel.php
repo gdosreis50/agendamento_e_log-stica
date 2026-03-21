@@ -63,7 +63,7 @@
 
                 $id = $row["idcheckList"];
 
-                // Se o veículo ainda não foi criado no array
+
                 if (!isset($checks[$id])) {
 
                     $checks[$id] = [

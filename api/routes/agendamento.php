@@ -6,14 +6,7 @@
         switch($metodo){
             case 'GET':
                 $agendamento = $parametro ? agendamentoModel::buscarPorId($pdo, $parametro) : agendamentoModel::listarAgendamento($pdo);
-                if($agendamento){
-                    echo json_encode($agendamento);
-                }else {
-                    http_response_code(404);
-                    echo json_encode([
-                        "erro" => "agendamento não encontrado"
-                    ]);
-                }
+                echo json_encode($agendamento);
                 break;
             
             case 'POST':

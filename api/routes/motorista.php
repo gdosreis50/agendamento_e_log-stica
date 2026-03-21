@@ -6,14 +6,7 @@
         switch($metodo){
             case 'GET':
                 $motorista = $parametro ? motoristaModel::buscarPorId($pdo, $parametro) : motoristaModel::listarMotorista($pdo);
-                if($motorista){
-                    echo json_encode($motorista);
-                }else {
-                    http_response_code(404);
-                    echo json_encode([
-                        "erro" => "Motorista não encontrado"
-                    ]);
-                }
+                echo json_encode($motorista);
                 break;
             
             case 'POST':

@@ -6,14 +6,8 @@
         switch($metodo){
             case 'GET':
                 $check = $parametro ? checkModel::buscarPorId($pdo, $parametro) : checkModel::listarCheck($pdo);
-                if($check){
-                    echo json_encode($check);
-                }else {
-                    http_response_code(404);
-                    echo json_encode([
-                        "erro" => "checklist não encontrado"
-                    ]);
-                }
+                echo json_encode($check);
+                
                 break;
             
             case 'POST':

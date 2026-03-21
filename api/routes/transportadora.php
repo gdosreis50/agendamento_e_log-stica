@@ -6,14 +6,9 @@
         switch($metodo){
             case 'GET':
                 $transportadora = $parametro ? transportadoraModel::buscarPorId($pdo, $parametro) : transportadoraModel::listarTransportadora($pdo);
-                if($transportadora){
-                    echo json_encode($transportadora);
-                }else {
-                    http_response_code(404);
-                    echo json_encode([
-                        "erro" => "transportadora não encontrada"
-                    ]);
-                }
+
+                echo json_encode($transportadora);
+                
                 break;
             
             case 'POST':

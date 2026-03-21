@@ -6,14 +6,9 @@
         switch($metodo){
             case 'GET':
                 $vagao = $parametro ? vagaoModel::buscarPorId($pdo, $parametro) : vagaoModel::listarVagao($pdo);
-                if($vagao){
-                    echo json_encode($vagao);
-                }else {
-                    http_response_code(404);
-                    echo json_encode([
-                        "erro" => "vagao não encontrado"
-                    ]);
-                }
+                
+                echo json_encode($vagao);
+               
                 break;
             
             case 'POST':

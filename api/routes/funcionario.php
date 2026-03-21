@@ -6,14 +6,7 @@
         switch($metodo){
             case 'GET':
                 $funcionario = $parametro ? funcionarioModel::buscarPorId($pdo, $parametro) : funcionarioModel::listarFuncionario($pdo);
-                if($funcionario){
-                    echo json_encode($funcionario);
-                }else {
-                    http_response_code(404);
-                    echo json_encode([
-                        "erro" => "funcionario não encontrado"
-                    ]);
-                }
+                echo json_encode($funcionario);
                 break;
             
             case 'POST':
