@@ -3,7 +3,7 @@
     class transportadoraModel {
         //GET methods
         public static function listarTransportadora ($pdo){
-            $sql = "SELECT * FROM transportadora WHERE ativo = 'ativo'";
+            $sql = "SELECT * FROM transportadora WHERE ativo = 'ativo' AND idtransportadora <> 4";
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
