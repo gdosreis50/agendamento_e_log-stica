@@ -3,10 +3,150 @@
     class agendamentoModel {
         //GET methods
         public static function listarAgendamento ($pdo){
-            $sql = "SELECT * FROM agendamento WHERE ativo = 'ativo'";
+            $sql = "SELECT 
+                        -- Dados do Checklist
+                        a.idagendamento, a.dataPrevista,
+                        
+                        -- Funcionário do agendamento
+                        func_agenda.idfuncionario AS idfunc_agenda, 
+                        func_agenda.nomeFunc AS nomefunc_agenda, 
+                        func_agenda.cpf AS cpffunc_agenda, 
+                        func_agenda.adm AS admfunc_agenda, 
+                        func_agenda.ativo AS funcativo_agenda,
+
+                        -- Dados do Veículo
+                        veiculo.idveiculo, veiculo.placa, veiculo.tipo, veiculo.tara,
+                        -- Funcionário do Veículo
+                        func_vei.idfuncionario AS idfunc_veiculo, 
+                        func_vei.nomeFunc AS nomefunc_veiculo,
+                        func_vei.cpf AS cpffunc_veiculo,
+                        func_vei.adm AS admfunc_veiculo,
+                        func_vei.ativo AS funcativo_veiculo,
+
+                        -- Dados do Motorista
+                        motorista.idmotoristas, motorista.nomeMotorista, motorista.cpf, motorista.cnh, motorista.dataVencimentoCnh, motorista.categoriaCnh, motorista.telefone,
+                        -- Funcionário do Motorista
+                        func_mot.idfuncionario AS idfunc_motorista, 
+                        func_mot.nomeFunc AS nomefunc_motorista,
+                        func_mot.cpf AS cpffunc_motorista,
+                        func_mot.adm AS admfunc_motorista,
+                        func_mot.ativo AS funcativo_motorista,
+
+                        -- Dados da Transportadora
+                        transportadora.idtransportadora, transportadora.nomeTransportadora, transportadora.cnpj, transportadora.antt, transportadora.email,
+                        -- Funcionário da Transportadora
+                        func_trans.idfuncionario AS idfunc_transportadora, 
+                        func_trans.nomeFunc AS nomefunc_transportadora,
+                        func_trans.cpf AS cpffunc_transportadora,
+                        func_trans.adm AS admfunc_transportadora,
+                        func_trans.ativo AS funcativo_transportadora,
+                        
+                        pedido.idpedidos,
+                        pedido.numPed,
+                        pedido.nomeCliente,
+                        pedido.cidadeCliente,
+                        pedido.numSacos,
+                        pedido.numPaletes,
+                        pedido.numRomaneio,
+                        pedido.transportadora AS transpPedido,
+                        pedido.statusPed,
+                        pedido.numPaleteRomaneio
+
+                    FROM agendamento a
+                    INNER JOIN veiculo ON a.veiculo_idveiculo = veiculo.idveiculo
+                    INNER JOIN motorista ON a.motorista_idmotoristas = motorista.idmotoristas
+                    INNER JOIN transportadora ON a.transportadora_idtransportadora = transportadora.idtransportadora
+                    INNER JOIN pedido ON a.pedido_idpedidos = pedido.idpedidos
+
+                    -- Múltiplos JOINs na tabela funcionário, cada um com um Alias diferente
+                    INNER JOIN funcionario func_agenda ON a.funcionario_idfuncionario = func_agenda.idfuncionario
+                    INNER JOIN funcionario func_vei ON veiculo.idfuncionario = func_vei.idfuncionario
+                    INNER JOIN funcionario func_mot ON motorista.idfuncionario = func_mot.idfuncionario
+                    INNER JOIN funcionario func_trans ON transportadora.idfuncionario = func_trans.idfuncionario
+
+                    WHERE a.ativo = 'ativo'";
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $dados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $agendados = [];
+            foreach($dados as $row){
+
+                $id = $row['idagendamento'];
+
+                if(!isset($agendados[$id])){
+                    $agendados[$id] = [
+                        "idAgendamento" => $row["idagendamento"],
+                        "dataPrevista" => $row["dataPrevista"],
+                        "funcionario" => [
+                            "idfuncionario" => $row['idfunc_agenda'],
+                            "nomeFunc" => $row['nomefunc_agenda'],
+                            "cpf" => $row['cpffunc_agenda'],
+                            "adm" => $row['admfunc_agenda'],
+                            "funcativo" => $row['funcativo_agenda']
+                        ],
+                        "veiculo" => [
+                            "idveiculo" => $row['idveiculo'],
+                            "placa" => $row['placa'],
+                            "tipo" => $row['tipo'],
+                            "tara" => $row['tara'],
+                            "funcionario" => [
+                                "idfuncionario" => $row['idfunc_veiculo'],
+                                "nomeFunc" => $row['nomefunc_veiculo'],
+                                "cpf" => $row['cpffunc_veiculo'],
+                                "adm" => $row['admfunc_veiculo'],
+                                "funcativo" => $row['funcativo_veiculo']
+                            ]
+                        ],
+                        "motorista" => [
+                            "idmotoristas" => $row['idmotoristas'],
+                            "nomeMotorista" => $row['nomeMotorista'],
+                            "cpfMot" => $row['cpf'],
+                            "cnh" => $row['cnh'],
+                            "dataVencimentoCnh" => $row['dataVencimentoCnh'],
+                            "categoriaCnh" => $row['categoriaCnh'],
+                            "telefone" => $row['telefone'],
+                            "funcionario" => [
+                                "idfuncionario" => $row['idfunc_motorista'],
+                                "nomeFunc" => $row['nomefunc_motorista'],
+                                "cpf" => $row['cpffunc_motorista'],
+                                "adm" => $row['admfunc_motorista'],
+                                "funcativo" => $row['funcativo_motorista']
+                            ]
+                        ],
+                        "transportadora" => [
+                            "idTransportadora" => $row['idtransportadora'],
+                            "nomeTransportadora" => $row['nomeTransportadora'],
+                            "cnpj" => $row['cnpj'],
+                            "antt" => $row['antt'],
+                            "email" => $row['email'],
+                            "funcionario" => [
+                                "idfuncionario" => $row['idfunc_transportadora'],
+                                "nomeFunc" => $row['nomefunc_transportadora'],
+                                "cpf" => $row['cpffunc_transportadora'],
+                                "adm" => $row['admfunc_transportadora'],
+                                "funcativo" => $row['funcativo_transportadora']
+                            ]
+                        ],
+                        "pedido" => [
+                            "idpedidos" => $row['idpedidos'],
+                            "numPed" => $row['numPed'],
+                            "nomeCliente" => $row['nomeCliente'],
+                            "cidadeCliente" => $row['cidadeCliente'],
+                            "numSacos" => $row['numSacos'],
+                            "numPaletes" => $row['numPaletes'],
+                            "numRomaneio" => $row['numRomaneio'],
+                            "transportadora" => $row['transpPedido'],
+                            "statusPed" => $row['statusPed'],
+                            "numPaleteRomaneio" => $row['numPaleteRomaneio']
+
+                        ]
+                    ];
+                }
+
+            }
+            return array_values($agendados);
+
         }
 
         public static function buscarPorId($pdo, $idAgen){
