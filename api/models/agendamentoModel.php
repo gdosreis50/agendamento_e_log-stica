@@ -1,7 +1,8 @@
 <?php
 
     class agendamentoModel {
-        //GET methods
+        
+    //GET methods
         public static function listarAgendamento ($pdo){
             $sql = "SELECT 
                         -- Dados do Checklist
@@ -22,6 +23,8 @@
                         func_vei.cpf AS cpffunc_veiculo,
                         func_vei.adm AS admfunc_veiculo,
                         func_vei.ativo AS funcativo_veiculo,
+
+                         vagao.idvagao, vagao.comprimento, vagao.largura, vagao.altura,
 
                         -- Dados do Motorista
                         motorista.idmotoristas, motorista.nomeMotorista, motorista.cpf, motorista.cnh, motorista.dataVencimentoCnh, motorista.categoriaCnh, motorista.telefone,
@@ -54,6 +57,7 @@
 
                     FROM agendamento a
                     INNER JOIN veiculo ON a.veiculo_idveiculo = veiculo.idveiculo
+                    LEFT JOIN vagao ON vagao.idveiculo = veiculo.idveiculo AND vagao.ativo = 'ativo'
                     INNER JOIN motorista ON a.motorista_idmotoristas = motorista.idmotoristas
                     INNER JOIN transportadora ON a.transportadora_idtransportadora = transportadora.idtransportadora
                     INNER JOIN pedido ON a.pedido_idpedidos = pedido.idpedidos
@@ -90,6 +94,7 @@
                             "placa" => $row['placa'],
                             "tipo" => $row['tipo'],
                             "tara" => $row['tara'],
+                            "vagoes" => [],
                             "funcionario" => [
                                 "idfuncionario" => $row['idfunc_veiculo'],
                                 "nomeFunc" => $row['nomefunc_veiculo'],
@@ -115,7 +120,7 @@
                             ]
                         ],
                         "transportadora" => [
-                            "idTransportadora" => $row['idtransportadora'],
+                            "idtransportadora" => $row['idtransportadora'],
                             "nomeTransportadora" => $row['nomeTransportadora'],
                             "cnpj" => $row['cnpj'],
                             "antt" => $row['antt'],
@@ -144,6 +149,15 @@
                     ];
                 }
 
+                if ($row['idvagao'] != null) {
+
+                    $agendados[$id]["veiculo"]["vagoes"][] = [
+                        "comprimento" => $row['comprimento'],
+                        "largura" => $row['largura'],
+                        "altura" => $row['altura']
+                    ];
+                }
+
             }
             return array_values($agendados);
 
@@ -160,7 +174,7 @@
     //POST method
         public static function criarAgendamento($data, $pdo){
 
-            $required = ['dataPrevista'];
+            $required = ['dataPrevista', 'idpedido'];
 
             foreach ($required as $field) {
                 if (empty($data[$field])) {
@@ -179,11 +193,11 @@
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
                 $data['dataPrevista'],
-                $data['motorista_idmotoristas'],
-                $data['funcionario_idfuncionario'],
-                $data['pedido_idpedidos'],
-                $data['transportadora_idtransportadora'],
-                $data['veiculo_idveiculo']
+                $data['idmotorista'],
+                $data['idfuncionario'],
+                $data['idpedido'],
+                $data['idtransportadora'],
+                $data['idveiculo']
             ]);
 
             http_response_code(201);
@@ -229,11 +243,11 @@
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
                     $data['dataPrevista'],
-                    $data['motorista_idmotoristas'],
-                    $data['funcionario_idfuncionario'],
-                    $data['pedido_idpedidos'],
-                    $data['transportadora_idtransportadora'],
-                    $data['veiculo_idveiculo'],
+                    $data['idmotorista'],
+                    $data['idfuncionario'],
+                    $data['idpedido'],
+                    $data['idtransportadora'],
+                    $data['idveiculo'],
                     $idAgen
                 ]);
 
