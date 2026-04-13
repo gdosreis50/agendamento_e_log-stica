@@ -123,15 +123,16 @@
                 }
             }
 
-            $sql = "INSERT INTO veiculo (placa, tipo, idfuncionario)
-            VALUES (?, ?, ?)";
+            $sql = "INSERT INTO veiculo (placa, tipo, idfuncionario, tara)
+            VALUES (?, ?, ?, ?)";
 
             try{
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([
                 $data['placa'],
                 $data['tipo'],
-                $data['idfuncionario']
+                $data['idfuncionario'],
+                $data['tara']
             ]);
 
             http_response_code(201);

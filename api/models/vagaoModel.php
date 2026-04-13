@@ -21,7 +21,7 @@
     //POST method
         public static function criarVagao($data, $pdo){
 
-            $required = ['comprimento', 'largura'];
+            $required = ['comprimento', 'largura', 'idveiculo', 'idfuncionario'];
 
             foreach ($required as $field) {
                 if (empty($data[$field])) {
