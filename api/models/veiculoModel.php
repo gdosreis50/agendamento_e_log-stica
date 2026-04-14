@@ -111,6 +111,8 @@
     //POST method
         public static function criarVeiculo($data, $pdo){
 
+            $pdo->beginTransaction();
+
             $required = ['placa'];
 
             foreach ($required as $field) {
@@ -135,6 +137,27 @@
                 $data['tara']
             ]);
 
+            $idGerado = $pdo->lastInsertId();
+
+            if(!empty($data['vagoes'])){
+                $sqlVag = "INSERT INTO vagao (comprimento, largura, altura, idveiculo, idfuncionario)
+                            VALUES (?, ?, ?, ?, ?)";
+
+                $stmtVag = $pdo->prepare($sqlVag);
+
+                foreach($data['vagoes'] as $vagao){
+                    $stmtVag->execute([
+                        $vagao['comprimento'],
+                        $vagao['largura'],
+                        $vagao['altura'],
+                        $idGerado,
+                        $vagao['idfuncionario']
+                    ]);
+                }
+            }
+
+            $pdo->commit();
+
             http_response_code(201);
             return 
             [
@@ -147,6 +170,7 @@
                     "Success" => false,
                     "Erro" => $e->getMessage()
                 ];
+                $pdo->rollBack();
             }
             
         }
@@ -165,25 +189,52 @@
                         ];
                     }
                 }
-
-                $sql = "UPDATE veiculo set 
-                                placa = ?,
-                                tipo = ?, 
-                                idFuncionario = ? WHERE idVeiculo = ?";
-
                 try{
-                    $stmt = $pdo->prepare($sql);
-                    $stmt->execute([
-                        $data['placa'],
-                        $data['tipo'],
-                        $data['idfuncionario'],
-                        $idVeiculo
-                    ]);
+                    $pdo->beginTransaction();
 
-                    http_response_code(200);
-                    return [
-                        "success" => true,
-                    ];
+                    $sql = "UPDATE veiculo set 
+                                    placa = ?,
+                                    tipo = ?, 
+                                    tara = ?,
+                                    idFuncionario = ? WHERE idVeiculo = ?";
+
+                    
+                        $stmt = $pdo->prepare($sql);
+                        $stmt->execute([
+                            $data['placa'],
+                            $data['tipo'],
+                            $data['tara'],
+                            $data['idfuncionario'],
+                            $idVeiculo
+                        ]);
+
+                        $sqlInativar = "UPDATE vagao SET ativo = 'desativado' WHERE idveiculo = ?";
+                        $stmtInativar = $pdo->prepare($sqlInativar);
+                        $stmtInativar->execute([$idVeiculo]);
+
+                        if(!empty($data['vagoes'])){
+                            $sqlVag = "INSERT INTO vagao (comprimento, largura, altura, idveiculo, idfuncionario)
+                                        VALUES (?, ?, ?, ?, ?)";
+
+                            $stmtVag = $pdo->prepare($sqlVag);
+
+                            foreach($data['vagoes'] as $vagao){
+                                $stmtVag->execute([
+                                    $vagao['comprimento'],
+                                    $vagao['largura'],
+                                    $vagao['altura'],
+                                    $idVeiculo,
+                                    $vagao['idfuncionario']
+                                ]);
+                            }
+                        }
+
+                        $pdo->commit();
+
+                        http_response_code(200);
+                        return [
+                            "success" => true,
+                        ];
                 } catch(PDOException $e){
                     http_response_code(500);
                     return [
@@ -191,7 +242,7 @@
                         "Erro" => $e->getMessage()
                     ];
                 }
-        }
+        }   
 
 
     //DELETE method
