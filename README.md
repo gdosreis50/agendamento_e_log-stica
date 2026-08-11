@@ -51,3 +51,9 @@ Requisições PUT para motoristas
   Apenas telefone não é obrigatório.
 
 Requisições DELETE para motoristas
+
+            localhost/api/motorista/25
+
+
+
+A mesma lógica se aplica para demais entidades do sistema.
